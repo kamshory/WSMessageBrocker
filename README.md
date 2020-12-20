@@ -70,11 +70,11 @@ Your system topology can be as shown below
 
 ![SMS Gateway](https://raw.githubusercontent.com/kamshory/WSMessageBrocker/main/sms-gateway.png)
 
-Other applications are IoT and smart home application using Raspberry Pi and others.
+Other applications are IoT and smart home application using Raspberry Pi and others. You have several clients spread over several places that are connected to a server using the mobile internet and must communicate with each other.
 
 ## Sender
 
-Sender is WSMessageBrocker client that send to receivers. All receivers that using same channel will receive the message sent by sender. You can limit the number of receivers that will receive the message. This is especially useful when you are running more than one receiver in the same application as there will only be one receiver in one channel receiving the message sent by the sender. This setting is done by the server and sender.
+Sender is WSMessageBrocker client that send to receivers. All receivers that using same channel will receive the message sent by sender. You can limit the number of receivers that will receive the message. This is especially useful when you are running more than one receiver in the same application as there will only be one receiver in one channel receiving the message sent by the sender. This setting is done by the server and overided by the sender.
 
 Sender send the message via WebSocket. For that, we need a websocket library to communicate with the server. An example sender is included in the `client-example` folder.
 
