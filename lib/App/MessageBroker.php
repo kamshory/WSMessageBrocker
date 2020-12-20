@@ -95,6 +95,15 @@ class MessageBroker implements MessageComponentInterface
 		$json = json_decode($message, true);
 		$channel = @$json['channel'];
 		$command = @$json['command'];
+		
+		if(isset($json['number_of_receiver']))
+		{
+			$maxReceiver = abs(@$json['number_of_receiver'] * 1);
+		}
+		else
+		{
+			$maxReceiver = $this->numberOfReceiver * 1;
+		}
 		if($command == 'ping')
 		{
 			$this->updateUserData($from->resourceId, array(
@@ -170,7 +179,7 @@ class MessageBroker implements MessageComponentInterface
 				{
 					$client->send($message);
 					$nreceiver++;
-					if($this->numberOfReceiver > 0 && $nreceiver >= $this->numberOfReceiver)
+					if($maxReceiver > 0 && $nreceiver >= $maxReceiver)
 					{
 						break;
 					}
