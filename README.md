@@ -38,15 +38,17 @@ Supported Algorithm:
 If you want to keep data to a database to ensure that message received to the receiver, database structure shown below:
 
 ```sql
-CREATE TABLE IF NOT EXISTS `data` (
-  `data_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `channel` varchar(100) DEFAULT NULL,
-  `data` longtext,
-  `created` datetime DEFAULT NULL,
-  PRIMARY KEY (`data_id`),
-  KEY `channel` (`channel`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1;
+CREATE TABLE `mq_data` (
+ `data_id` bigint(20) NOT NULL AUTO_INCREMENT,
+ `channel` varchar(100) DEFAULT NULL,
+ `data` longtext,
+ `created` datetime DEFAULT NULL,
+ PRIMARY KEY (`data_id`),
+ KEY `channel` (`channel`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 ```
+
+Note: `mq_` is table prefix. You can use another prefix according to your application.
 
 You can define the fields in the table yourself according to your needs, but if you want to save the data in JSON format then the structure above is enough.
 
