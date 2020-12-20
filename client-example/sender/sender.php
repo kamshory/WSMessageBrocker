@@ -21,7 +21,8 @@ $channel = getenv('MQ_CANNEL_NAME');
 
 
 $headers = array(
-	'Authorization: Basic '.base64_encode($username.':'.$password)
+	'Authorization: Basic '.base64_encode($username.':'.$password),
+	'Content-type: application/json'
 );
 
 $request = array(
