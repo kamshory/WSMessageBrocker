@@ -68,6 +68,6 @@ Case
 
 Your system topology can be as shown below
 
-![Topology](https://raw.githubusercontent.com/kamshory/WSMessageBrocker/main/sms-gateway.png)
+![SMS Gateway](https://raw.githubusercontent.com/kamshory/WSMessageBrocker/main/sms-gateway.png)
 
 Other applications are IoT and smart home application using Raspberry Pi and others.
