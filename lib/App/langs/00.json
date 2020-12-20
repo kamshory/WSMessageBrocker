@@ -1,0 +1,11 @@
+{
+	"notif_receive_video_call_title": "Video Call",
+	"notif_receive_video_call_text": "%s call you over video",
+
+	"notif_receive_voice_call_title": "Voice Call",
+	"notif_receive_voice_call_text": "%s call you over voice",
+
+	"notif_receive_message_title": "Private Message",
+	"notif_receive_message_text": "%s sent you private message"
+
+}
