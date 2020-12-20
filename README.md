@@ -71,3 +71,156 @@ Your system topology can be as shown below
 ![SMS Gateway](https://raw.githubusercontent.com/kamshory/WSMessageBrocker/main/sms-gateway.png)
 
 Other applications are IoT and smart home application using Raspberry Pi and others.
+
+## Sender
+
+Sender is WSMessageBrocker client that send to receivers. All receivers that using same channel will receive the message sent by sender. You can limit the number of receivers that will receive the message. This is especially useful when you are running more than one receiver in the same application as there will only be one receiver in one channel receiving the message sent by the sender. This setting is done by the server and sender.
+
+Sender send the message via WebSocket. For that, we need a websocket library to communicate with the server. An example sender is included in the `client-example` folder.
+
+**sender.php**
+
+```php
+<?php
+require "websocket-client.php";
+
+$server = '127.0.0.1';
+$port = 8888;
+$username = 'qa';
+$password = '4lt0@1234';
+$channel = 'sms';
+
+putenv('MQ_SERVER_HOST='.$server);
+putenv('MQ_SERVER_PORT='.$port);
+putenv('MQ_CLIENT_USERNAME='.$username);
+putenv('MQ_CLIENT_PASSWORD='.$password);
+putenv('MQ_CANNEL_NAME='.$channel);
+
+$server = getenv('MQ_SERVER_HOST');
+$port = getenv('MQ_SERVER_PORT');
+$username = getenv('MQ_CLIENT_USERNAME');
+$password = getenv('MQ_CLIENT_PASSWORD');
+$channel = getenv('MQ_CANNEL_NAME');
+
+
+$headers = array(
+	'Authorization: Basic '.base64_encode($username.':'.$password)
+);
+
+$request = array(
+	'command'=>'send-message',
+	'channel'=>$channel,
+	'data'=>array(
+		array(
+			'id'=>uniqid(),
+			'time' => time(0),
+			'receiver'=>'08126666666',
+			'message'=>'Haloo. Pesan ini dikirim '.date('j F Y H:i:s')
+		)	
+	)
+);
+$message = json_encode($request, JSON_PRETTY_PRINT);
+
+if($sp = websocket_open($server, $port, $headers, $errstr, 10, false)) 
+{
+	websocket_write($sp, $message);
+	$response = websocket_read($sp, $errorcode, $errstr); 
+	echo $response."\r\n";
+}
+else 
+{
+	echo "Failed to connect to server\n";
+	echo "Server responed with: $errstr\n";
+}
+?>
+```
+
+## Receiver
+
+Receiver is WSMessageBrocker client that receive the message sent by the receivers. All receivers that using same channel will receive the message sent by sender. You can limit the number of receivers that will receive the message. This is especially useful when you are running more than one receiver in the same application as there will only be one receiver in one channel receiving the message sent by the sender. This setting is done by the server and sender.
+
+Sender receive the message via WebSocket. For that, we need a websocket library to communicate with the server. An example sender is included in the `client-example` folder.
+
+**receiver.php**
+
+```php
+<?php
+
+$server = '127.0.0.1';
+$port = 8888;
+$username = 'qa';
+$password = '4lt0@1234';
+$channel = 'sms';
+
+putenv('MQ_SERVER_HOST='.$server);
+putenv('MQ_SERVER_PORT='.$port);
+putenv('MQ_CLIENT_USERNAME='.$username);
+putenv('MQ_CLIENT_PASSWORD='.$password);
+putenv('MQ_CANNEL_NAME='.$channel);
+
+$server = getenv('MQ_SERVER_HOST');
+$port = getenv('MQ_SERVER_PORT');
+$username = getenv('MQ_CLIENT_USERNAME');
+$password = getenv('MQ_CLIENT_PASSWORD');
+$channel = getenv('MQ_CANNEL_NAME');
+
+$headers = array(
+	'Authorization: Basic '.base64_encode($username.':'.$password)
+);
+
+require "websocket-client.php";
+
+function process_response($response)
+{
+	$json = json_decode($response, true);
+	if($json != null && !empty($json))
+	{
+		$command = $json['command'];
+		$data = $json['data'];
+		print_r($json);
+		if($command == 'send-message')
+		{
+		}
+		else if($command == 'connect')
+		{
+			echo "Connected\r\n";
+		}
+	}
+}
+
+echo "Server: $server:$port\n";
+
+$request = array(
+	'command'=>'receive-message',
+	'channel'=>$channel,
+	'data'=>array(
+	)
+);
+$message = json_encode($request, JSON_PRETTY_PRINT);
+
+while(true)
+{
+	echo "Connecting...\r\n";
+	if( $sp = websocket_open($server, $port, $headers, $errstr, 10, false) ) 
+	{
+		websocket_write($sp, $message);
+		while(!@feof($sp))
+		{
+			$response = @websocket_read($sp, $errorcode, $errstr);
+			if(strlen($response) > 7)
+			{
+				process_response($response);
+			}
+		}
+
+	}
+	else 
+	{
+		echo "Failed to connect to server\n";
+		echo "Server responed with: $errstr\n";
+	}
+	sleep(5);
+}
+?>
+```
+
